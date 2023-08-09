@@ -1,4 +1,4 @@
-const log = []
+const arrayOfArrays = [];
 
 function arraysToCSV(arrays, filename) {
     const csvContent = arrays.map(row => row.join(';')).join('\n');
@@ -183,14 +183,11 @@ function lineGenerator(config, dateFacture) {
 }
 
 document.getElementById("startButton").addEventListener("click", function () {
-    const arrayOfArrays = [];
     let final = "no";
 
 
     while (final.toLowerCase() !== "si") {
         const newRow = lineGenerator(config, dateFacture);
-        log.push(newRow)
-        console.log(log)
         arrayOfArrays.push(newRow);
         final = prompt("¿Finalizar? (Sí/No)");
     }
@@ -201,5 +198,5 @@ document.getElementById("startButton").addEventListener("click", function () {
 
 document.getElementById("logButton").addEventListener("click", function () {
 
-    arraysToCSV(log, "log.csv");
+    arraysToCSV(arrayOfArrays, "datos.csv");
 });
