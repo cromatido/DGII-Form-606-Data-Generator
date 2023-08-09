@@ -119,12 +119,14 @@ const nombres = {
     25: "Forma de pago"
 }
 
-const config = [0, 2, 5, 6, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+const config = [0, 2, 5, 6, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+const dateFacture = "202302"
 
 
 function lineGenerator(config, dateFacture) {
     const newLine = []
     let i = 1
+    id = 1
 
     while(i < factureLine.length) {
         if (!config.includes(i)) {
@@ -163,10 +165,14 @@ function lineGenerator(config, dateFacture) {
             }
 
         } else if (config.includes(i)) {
+            if(i === 2){
+                newLine.push(id)
+            }
             if(i === 6){
                 newLine.push(dateFacture)
+            } else{
+                newLine.push(" ")
             }
-            newLine.push(" ")
         }
         i++
     }
@@ -179,11 +185,11 @@ document.getElementById("startButton").addEventListener("click", function () {
     let final = "no";
 
     while (final.toLowerCase() !== "si") {
-        const newRow = lineGenerator(config, 202302);
+        const newRow = lineGenerator(config, dateFacture);
         arrayOfArrays.push(newRow);
         final = prompt("¿Finalizar? (Sí/No)");
     }
 
 
-    arraysToCSV(arrayOfArrays, "data.csv");
+    arraysToCSV(arrayOfArrays, "datos.csv");
 });
