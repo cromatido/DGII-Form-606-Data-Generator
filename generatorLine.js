@@ -1,4 +1,4 @@
-const arrayOfArrays = [];
+let arrayOfArrays = [];
 
 function arraysToCSV(arrays, filename) {
     const csvContent = arrays.map(row => row.join(';')).join('\n');
@@ -199,4 +199,8 @@ document.getElementById("startButton").addEventListener("click", function () {
 document.getElementById("logButton").addEventListener("click", function () {
 
     arraysToCSV(arrayOfArrays, "datos.csv");
+});
+
+document.getElementById("clearLog").addEventListener("click", function () {
+    arrayOfArrays = []
 });
