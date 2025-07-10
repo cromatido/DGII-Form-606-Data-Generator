@@ -1,69 +1,12 @@
+// Variables globales
 let arrayOfArrays = [];
+let currentRowId = 1;
 
-function arraysToCSV(arrays, filename) {
-    const csvContent = arrays.map(row => row.join(';')).join('\n');
-    const csvData = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", csvData);
-    link.setAttribute("download", filename);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+// Configuración original
+const config = [0, 2, 5, 6, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+const dateFacture = "202302";
 
-let space;
-let rnc;
-let id;
-let goods_services;
-let ncf;
-let ncf_modified;
-let year_month;
-let date_day;
-let nulled;
-let nulled2;
-let services;
-let goods;
-let total_invoiced_amount
-let itbs
-let itbs_detained
-let itbs_art349
-let itbs_cost
-let itbs_ahead
-let itbs_purchases
-let income_tax_type
-let isr_income
-let isr_purchases
-let selective_tax
-let others_taxes
-let legal_tip
-let payment
-
-const factureLine = [space, rnc,
-    id,
-    goods_services,
-    ncf,
-    ncf_modified,
-    year_month,
-    date_day,
-    nulled,
-    nulled2,
-    services,
-    goods,
-    total_invoiced_amount,
-    itbs,
-    itbs_detained,
-    itbs_art349,
-    itbs_cost,
-    itbs_ahead,
-    itbs_purchases,
-    income_tax_type,
-    isr_income,
-    isr_purchases,
-    selective_tax,
-    others_taxes,
-    legal_tip,
-    payment]
-
+// Objetos de mapeo originales
 const bienes_servicios_obj = {
     "1": "01-GASTOS DE PERSONAL",
     "2": "02-GASTOS POR TRABAJOS, SUMINISTROS Y SERVICIOS",
@@ -76,9 +19,7 @@ const bienes_servicios_obj = {
     "9": "09 -COMPRAS Y GASTOS QUE FORMARAN PARTE DEL COSTO DE VENTA ",
     "10": "10 -ADQUISICIONES DE ACTIVOS ",
     "11": "11- GASTOS DE SEGUROS"
-}
-
-const bienes_servicios_map = new Map(Object.entries(bienes_servicios_obj));
+};
 
 const forma_de_pago = {
     1: "01 - EFECTIVO",
@@ -88,119 +29,244 @@ const forma_de_pago = {
     5: "05 - PERMUTA",
     6: "06 - NOTA DE CREDITO",
     7: "07 - MIXTO",
+};
+
+// Función para convertir arrays a CSV (mantenida del código original)
+function arraysToCSV(arrays, filename) {
+    const csvContent = arrays.map(row => row.join(';')).join('\n');
+    const csvData = "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", csvData);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
-const forma_de_pago_map = new Map(Object.entries(forma_de_pago));
-
-const nombres = {
-    0: " ",
-    1: "Rnc",
-    2: "Id",
-    3: "Bienes y servicios",
-    4: "Ncf",
-    5: "Ncf o Documento modificado",
-    6: "Año/mes",
-    7: "Dia",
-    8: "Fecha pago",
-    9: "Fecha pago 2",
-    10: "Monto Facturado en Servicios",
-    11: "Monto Facturado en Bienes",
-    12: "Total Monto Facturado",
-    13: "ITBS Facturado",
-    14: "ITBS Retenido",
-    15: "ITBS sujeto a Proporcionalidad (Art. 349)",
-    16: "ITBS llevado al costo",
-    17: "ITBS por Adelantar",
-    18: "ITBS percibido en compras",
-    19: "Tipo de Retencion en ISR",
-    20: "Monto Retencion Renta",
-    21: "ISR Percibido en compras",
-    22: "Impuesto Selectivo al Consumo",
-    23: "Otros Impuesto/Tasas",
-    24: "Monto Propina Legal",
-    25: "Forma de pago"
-}
-
-const config = [0, 2, 5, 6, 8, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
-const dateFacture = "202302"
-
-
-function lineGenerator(config, dateFacture) {
-    const newLine = []
-    let i = 1
-    id = 1
-
-    while(i < factureLine.length) {
+// Función para generar línea de datos (adaptada del código original)
+function generateDataLine(formData) {
+    const newLine = [];
+    
+    // Generar array con 26 elementos (como en el código original)
+    for (let i = 0; i < 26; i++) {
         if (!config.includes(i)) {
-            if (i === 3) {
-                const opcion = (prompt(`Elige la opción numérica de bienes y servicios:\n${Object.entries(bienes_servicios_obj).map(([key, value]) => `${key} - ${value}`).join('\n')}`))
-
-                if (opcion !== null) {
-                    if (bienes_servicios_map.has(opcion)) {
-                        const value = bienes_servicios_map.get(opcion);
-                        newLine.push(value);
-                    }
-                } else {
-                    console.log("Opción inválida");
-                }
-
-            } else if (i === 10 || i === 11) {
-                const evaluate = prompt(`Inserta ${nombres[i]}`)
-                if (evaluate != null) {
-                    const result = eval(evaluate)
-                    newLine.push(result)
-                }
+            switch (i) {
+                case 1: // RNC
+                    newLine.push(formData.rnc || " ");
+                    break;
+                case 3: // Bienes y servicios
+                    newLine.push(formData.goodsServices || " ");
+                    break;
+                case 4: // NCF
+                    newLine.push(formData.ncf || " ");
+                    break;
+                case 7: // Día
+                    newLine.push(formData.day || " ");
+                    break;
+                case 10: // Monto Facturado en Servicios
+                    newLine.push(parseFloat(formData.servicesAmount) || 0);
+                    break;
+                case 11: // Monto Facturado en Bienes
+                    newLine.push(parseFloat(formData.goodsAmount) || 0);
+                    break;
+                case 13: // ITBS Facturado
+                    newLine.push(parseFloat(formData.itbs) || 0);
+                    break;
+                case 14: // ITBS Retenido
+                    newLine.push(parseFloat(formData.itbsDetained) || 0);
+                    break;
+                case 20: // Monto Retención Renta
+                    newLine.push(parseFloat(formData.isrIncome) || 0);
+                    break;
+                case 25: // Forma de pago
+                    newLine.push(formData.paymentMethod || " ");
+                    break;
+                default:
+                    newLine.push(" ");
             }
-            else if (i === 25) {
-                const opcion = (prompt(`Elige la opción numérica de forma de pago:\n${Object.entries(forma_de_pago).map(([key, value]) => `${key} - ${value}`).join('\n')}`))
-
-                if (opcion !== null) {
-                    if (forma_de_pago_map.has(opcion)) {
-                        const value = forma_de_pago_map.get(opcion);
-                        newLine.push(value);
-                    }
-                } else {
-                    console.log("Opción inválida");
-                }
+        } else {
+            if (i === 2) {
+                newLine.push(currentRowId);
+            } else if (i === 6) {
+                newLine.push(dateFacture);
             } else {
-                newLine.push(prompt(`Inserta ${nombres[i]}`))
-            }
-
-        } else if (config.includes(i)) {
-            if(i === 2){
-                newLine.push(id)
-            }
-            if(i === 6){
-                newLine.push(dateFacture)
-            } else{
-                newLine.push(" ")
+                newLine.push(" ");
             }
         }
-        i++
     }
-
+    
     return newLine;
 }
 
-document.getElementById("startButton").addEventListener("click", function () {
-    let final = "no";
+// Función para actualizar estadísticas
+function updateStats() {
+    const totalRows = arrayOfArrays.length;
+    const totalAmount = arrayOfArrays.reduce((sum, row) => {
+        return sum + (parseFloat(row[12]) || 0); // Total Monto Facturado está en índice 12
+    }, 0);
+    
+    document.getElementById('totalRows').textContent = totalRows;
+    document.getElementById('totalAmount').textContent = `$${totalAmount.toFixed(2)}`;
+}
 
-
-    while (final.toLowerCase() !== "si") {
-        const newRow = lineGenerator(config, dateFacture);
-        arrayOfArrays.push(newRow);
-        final = prompt("¿Finalizar? (Sí/No)");
+// Función para actualizar la tabla
+function updateTable() {
+    const tableBody = document.getElementById('tableBody');
+    
+    if (arrayOfArrays.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="10" class="empty-state">
+                    <h3>No hay datos ingresados</h3>
+                    <p>Haz clic en "Agregar Línea" para comenzar a ingresar datos</p>
+                </td>
+            </tr>
+        `;
+        return;
     }
+    
+    tableBody.innerHTML = arrayOfArrays.map((row, index) => `
+        <tr>
+            <td>${row[2] || index + 1}</td>
+            <td>${row[1] || ''}</td>
+            <td>${row[3] || ''}</td>
+            <td>${row[4] || ''}</td>
+            <td>$${(parseFloat(row[10]) || 0).toFixed(2)}</td>
+            <td>$${(parseFloat(row[11]) || 0).toFixed(2)}</td>
+            <td>$${(parseFloat(row[12]) || 0).toFixed(2)}</td>
+            <td>$${(parseFloat(row[13]) || 0).toFixed(2)}</td>
+            <td>${row[25] || ''}</td>
+            <td>
+                <button class="btn btn-danger" onclick="deleteRow(${index})" style="padding: 5px 10px; font-size: 12px;">
+                    🗑️
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
 
+// Función para eliminar fila
+function deleteRow(index) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta línea?')) {
+        arrayOfArrays.splice(index, 1);
+        updateTable();
+        updateStats();
+    }
+}
 
-    arraysToCSV(arrayOfArrays, "datos.csv");
-});
+// Función para calcular total automáticamente
+function calculateTotal() {
+    const servicesAmount = parseFloat(document.getElementById('servicesAmount').value) || 0;
+    const goodsAmount = parseFloat(document.getElementById('goodsAmount').value) || 0;
+    const total = servicesAmount + goodsAmount;
+    document.getElementById('totalAmount').value = total.toFixed(2);
+}
 
-document.getElementById("logButton").addEventListener("click", function () {
+// Función para abrir modal
+function openModal() {
+    document.getElementById('dataModal').style.display = 'block';
+    document.getElementById('dataForm').reset();
+    document.getElementById('totalAmount').value = '0.00';
+}
 
-    arraysToCSV(arrayOfArrays, "datos.csv");
-});
+// Función para cerrar modal
+function closeModal() {
+    document.getElementById('dataModal').style.display = 'none';
+}
 
-document.getElementById("clearLog").addEventListener("click", function () {
-    arrayOfArrays = []
+// Función para guardar datos del formulario
+function saveFormData() {
+    const form = document.getElementById('dataForm');
+    const formData = new FormData(form);
+    
+    // Validar campos requeridos
+    const rnc = formData.get('rnc');
+    const ncf = formData.get('ncf');
+    const goodsServices = formData.get('goodsServices');
+    const paymentMethod = formData.get('paymentMethod');
+    
+    if (!rnc || !ncf || !goodsServices || !paymentMethod) {
+        alert('Por favor completa todos los campos requeridos');
+        return;
+    }
+    
+    // Crear objeto con los datos del formulario
+    const data = {
+        rnc: rnc,
+        ncf: ncf,
+        goodsServices: goodsServices,
+        servicesAmount: formData.get('servicesAmount'),
+        goodsAmount: formData.get('goodsAmount'),
+        itbs: formData.get('itbs'),
+        itbsDetained: formData.get('itbsDetained'),
+        isrIncome: formData.get('isrIncome'),
+        paymentMethod: paymentMethod,
+        day: new Date().getDate().toString().padStart(2, '0')
+    };
+    
+    // Generar línea de datos usando la lógica original
+    const newLine = generateDataLine(data);
+    arrayOfArrays.push(newLine);
+    
+    // Actualizar interfaz
+    updateTable();
+    updateStats();
+    closeModal();
+    
+    // Incrementar ID para la siguiente línea
+    currentRowId++;
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Botón para agregar línea
+    document.getElementById('addRowBtn').addEventListener('click', openModal);
+    
+    // Botón para descargar CSV
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        if (arrayOfArrays.length === 0) {
+            alert('No hay datos para descargar');
+            return;
+        }
+        arraysToCSV(arrayOfArrays, "formulario_606_dgii.csv");
+    });
+    
+    // Botón para descargar log (mantiene funcionalidad original)
+    document.getElementById('downloadLogBtn').addEventListener('click', function() {
+        if (arrayOfArrays.length === 0) {
+            alert('No hay datos para descargar');
+            return;
+        }
+        arraysToCSV(arrayOfArrays, "datos.csv");
+    });
+    
+    // Botón para limpiar datos
+    document.getElementById('clearBtn').addEventListener('click', function() {
+        if (confirm('¿Estás seguro de que quieres limpiar todos los datos?')) {
+            arrayOfArrays = [];
+            currentRowId = 1;
+            updateTable();
+            updateStats();
+        }
+    });
+    
+    // Modal controls
+    document.querySelector('.close').addEventListener('click', closeModal);
+    document.getElementById('cancelBtn').addEventListener('click', closeModal);
+    document.getElementById('saveBtn').addEventListener('click', saveFormData);
+    
+    // Cerrar modal al hacer clic fuera de él
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('dataModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    
+    // Calcular total automáticamente cuando cambien los montos
+    document.getElementById('servicesAmount').addEventListener('input', calculateTotal);
+    document.getElementById('goodsAmount').addEventListener('input', calculateTotal);
+    
+    // Inicializar estadísticas
+    updateStats();
 });

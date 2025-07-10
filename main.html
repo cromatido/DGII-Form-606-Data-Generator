@@ -1,20 +1,447 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeneratorLines</title>
+    <title>Generador Formulario 606 DGII</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(86, 171, 47, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 65, 108, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(149, 165, 166, 0.3);
+        }
+
+        .table-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: white;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
-
 <body>
-    <button id="startButton">Iniciar</button>
-    <button id="logButton">Descargar log</button>
-    <button id="clearLog">Limpiar log</button>
-    <script>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Generador Formulario 606 DGII</h1>
+            <p>Genera archivos CSV para el formulario 606 de la Dirección General de Impuestos Internos</p>
+        </div>
 
-    </script>
+        <div class="controls">
+            <button class="btn btn-primary" id="addRowBtn">
+                ➕ Agregar Línea
+            </button>
+            <button class="btn btn-success" id="downloadBtn">
+                📥 Descargar CSV
+            </button>
+            <button class="btn btn-secondary" id="downloadLogBtn">
+                📋 Descargar Log
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                🗑️ Limpiar Datos
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalRows">0</div>
+                <div class="stat-label">Líneas Totales</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalAmount">$0.00</div>
+                <div class="stat-label">Monto Total</div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>RNC</th>
+                        <th>Bienes/Servicios</th>
+                        <th>NCF</th>
+                        <th>Monto Servicios</th>
+                        <th>Monto Bienes</th>
+                        <th>Total Facturado</th>
+                        <th>ITBS</th>
+                        <th>Forma de Pago</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="10" class="empty-state">
+                            <h3>No hay datos ingresados</h3>
+                            <p>Haz clic en "Agregar Línea" para comenzar a ingresar datos</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para entrada de datos -->
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 Ingresar Datos de Factura</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="dataForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rnc">RNC:</label>
+                            <input type="text" id="rnc" name="rnc" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ncf">NCF:</label>
+                            <input type="text" id="ncf" name="ncf" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="goodsServices">Bienes y Servicios:</label>
+                        <select id="goodsServices" name="goodsServices" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="01-GASTOS DE PERSONAL">01-GASTOS DE PERSONAL</option>
+                            <option value="02-GASTOS POR TRABAJOS, SUMINISTROS Y SERVICIOS">02-GASTOS POR TRABAJOS, SUMINISTROS Y SERVICIOS</option>
+                            <option value="03-ARRENDAMIENTOS">03-ARRENDAMIENTOS</option>
+                            <option value="04-GASTOS DE ACTIVOS FIJO">04-GASTOS DE ACTIVOS FIJO</option>
+                            <option value="05 -GASTOS DE REPRESENTACIÓN">05 -GASTOS DE REPRESENTACIÓN</option>
+                            <option value="06 -OTRAS DEDUCCIONES ADMITIDAS">06 -OTRAS DEDUCCIONES ADMITIDAS</option>
+                            <option value="07 -GASTOS FINANCIEROS">07 -GASTOS FINANCIEROS</option>
+                            <option value="08 -GASTOS EXTRAORDINARIOS">08 -GASTOS EXTRAORDINARIOS</option>
+                            <option value="09 -COMPRAS Y GASTOS QUE FORMARAN PARTE DEL COSTO DE VENTA">09 -COMPRAS Y GASTOS QUE FORMARAN PARTE DEL COSTO DE VENTA</option>
+                            <option value="10 -ADQUISICIONES DE ACTIVOS">10 -ADQUISICIONES DE ACTIVOS</option>
+                            <option value="11- GASTOS DE SEGUROS">11- GASTOS DE SEGUROS</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="servicesAmount">Monto Facturado en Servicios:</label>
+                            <input type="number" id="servicesAmount" name="servicesAmount" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="goodsAmount">Monto Facturado en Bienes:</label>
+                            <input type="number" id="goodsAmount" name="goodsAmount" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="totalAmount">Total Monto Facturado:</label>
+                            <input type="number" id="totalAmount" name="totalAmount" step="0.01" min="0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="itbs">ITBS Facturado:</label>
+                            <input type="number" id="itbs" name="itbs" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="itbsDetained">ITBS Retenido:</label>
+                            <input type="number" id="itbsDetained" name="itbsDetained" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="isrIncome">Monto Retención Renta:</label>
+                            <input type="number" id="isrIncome" name="isrIncome" step="0.01" min="0" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paymentMethod">Forma de Pago:</label>
+                        <select id="paymentMethod" name="paymentMethod" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="01 - EFECTIVO">01 - EFECTIVO</option>
+                            <option value="02 - CHEQUES/TRANSFERENCIAS/DEPÓSITO">02 - CHEQUES/TRANSFERENCIAS/DEPÓSITO</option>
+                            <option value="03 - TARJETA CRÉDITO/DÉBITO">03 - TARJETA CRÉDITO/DÉBITO</option>
+                            <option value="04 - COMPRA A CREDITO">04 - COMPRA A CREDITO</option>
+                            <option value="05 - PERMUTA">05 - PERMUTA</option>
+                            <option value="06 - NOTA DE CREDITO">06 - NOTA DE CREDITO</option>
+                            <option value="07 - MIXTO">07 - MIXTO</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+                <button class="btn btn-primary" id="saveBtn">Guardar Línea</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./generatorLine.js"></script>
 </body>
-<script src="./generatorLine.js"></script>
-
 </html>
